@@ -1,6 +1,5 @@
 package com.palacin.kenny.laboratoriocalificadosustitutorio.adapter
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -27,24 +26,25 @@ class PostAdapter(
         holder.binding.tvTitle.text = post.title
         holder.binding.tvBody.text = post.body
 
-        // Click corto: enviar título por mensaje
+        // Click corto: enviar título por mensaje SMS
         holder.binding.root.setOnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("smsto:+51925137361")
-                putExtra("sms_body", post.title)
+                putExtra("sms_body", post.title) // Enviar título en el mensaje
             }
             context.startActivity(intent)
         }
 
-        // Click largo: enviar body por correo
+        // Click largo: enviar body del post por correo
         holder.binding.root.setOnLongClickListener {
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("victor.saico@tecsup.edu.pe"))
-                putExtra(Intent.EXTRA_SUBJECT, "Body del post")
+            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:victor.saico@tecsup.edu.pe")
+                putExtra(Intent.EXTRA_SUBJECT, "Enunciado del post")
                 putExtra(Intent.EXTRA_TEXT, post.body)
             }
-            context.startActivity(Intent.createChooser(intent, "Enviar correo"))
+            if (emailIntent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(emailIntent)
+            }
             true
         }
     }
